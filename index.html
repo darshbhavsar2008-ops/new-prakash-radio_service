@@ -3,53 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Prakash Radio Service | Virtual Shop</title>
-    
-    <!-- Clean, modern fonts for UI and textures -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <title>New Prakash Radio Service | Virtual Store</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         body, html {
             margin: 0; padding: 0;
-            background-color: #87CEEB; /* Sky blue base */
-            overflow-x: hidden;
-            overscroll-behavior-y: none;
+            background-color: #0f172a;
+            color: white;
             font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            overscroll-behavior: none;
         }
 
-        #webgl-canvas {
+        /* 3D Canvas container */
+        #canvas-container {
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             z-index: 1;
-            pointer-events: none;
+            pointer-events: none; /* Let scroll events pass through */
         }
 
+        /* Invisible scroll area */
         #scroll-proxy {
             position: absolute;
             top: 0; left: 0;
             width: 100%;
-            height: 1500vh; /* Extremely long scroll for smooth pacing */
+            height: 1200vh; /* Long scroll for smooth journey */
             z-index: 10;
         }
 
-        /* Clean Glass UI Overlay */
+        /* Modern UI Layer */
         #ui-layer {
             position: fixed;
             top: 0; left: 0;
@@ -59,64 +46,91 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+        }
+
+        header {
             padding: 2rem;
-            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0));
+            color: #111;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            color: #333;
+        .hud-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            pointer-events: auto;
+            transition: all 0.5s ease;
         }
 
-        .scroll-indicator {
-            width: 30px; height: 50px;
-            border: 2px solid #333;
-            border-radius: 15px;
-            position: relative;
-            margin: 0 auto;
-        }
-        .scroll-dot {
-            width: 6px; height: 6px;
-            background: #333;
-            border-radius: 50%;
+        .scroll-prompt {
             position: absolute;
-            top: 8px; left: 50%;
+            bottom: 3rem;
+            left: 50%;
             transform: translateX(-50%);
-            animation: scroll-anim 2s infinite ease-in-out;
-        }
-        @keyframes scroll-anim {
-            0% { top: 8px; opacity: 1; }
-            100% { top: 32px; opacity: 0; }
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #111;
+            background: rgba(255,255,255,0.8);
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            animation: bounce 2s infinite;
         }
 
-        /* Progress Bar */
-        #progress-container {
-            position: fixed;
-            bottom: 0; left: 0;
-            width: 100vw; height: 4px;
-            background: rgba(255,255,255,0.3);
-            z-index: 60;
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
         }
+
         #progress-bar {
-            height: 100%; width: 0%;
+            position: fixed;
+            top: 0; left: 0;
+            height: 5px; width: 0%;
             background: #2563eb;
-            transition: width 0.1s;
+            z-index: 100;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        /* End screen overlay */
+        #end-screen {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 60;
+            opacity: 0;
+            pointer-events: none;
+            text-align: center;
+        }
+        
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            pointer-events: auto;
+            border: none;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #1d4ed8; }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 5px; }
     </style>
 
-    <!-- Three.js Import Map -->
+    <!-- Import maps for Three.js -->
     <script type="importmap">
         {
             "imports": {
@@ -127,158 +141,148 @@
 </head>
 <body>
 
-    <!-- UI Overlay -->
-    <div id="ui-layer">
-        <div class="flex justify-between items-start w-full">
-            <div class="glass-panel" id="header-panel">
-                <h1 class="font-serif text-2xl font-bold text-gray-900">New Prakash Radio Service</h1>
-                <p class="text-sm text-gray-600 mt-1">Est. Idar, Gujarat</p>
-            </div>
-            <div class="glass-panel text-right opacity-0 transition-opacity duration-500" id="context-panel">
-                <p class="font-semibold text-gray-800" id="context-title">Location</p>
-                <p class="text-sm text-gray-600" id="context-desc">Turanga Circle</p>
-            </div>
-        </div>
+    <div id="progress-bar"></div>
 
-        <div class="w-full text-center pb-8" id="scroll-prompt">
-            <div class="scroll-indicator mb-3"><div class="scroll-dot"></div></div>
-            <p class="text-sm font-medium text-gray-800 tracking-wide uppercase shadow-sm">Scroll to Explore</p>
+    <div id="ui-layer">
+        <header>
+            <div class="hud-panel">
+                <h1 class="text-3xl font-extrabold tracking-tight">NEW PRAKASH</h1>
+                <p class="text-blue-600 font-semibold tracking-wide">RADIO SERVICE</p>
+            </div>
+            
+            <div class="hud-panel opacity-0" id="info-panel" style="transform: translateY(-20px);">
+                <h3 class="text-sm text-gray-500 uppercase font-bold" id="info-category">Location</h3>
+                <p class="text-xl font-bold text-gray-900" id="info-title">Idar, Gujarat</p>
+                <p class="text-sm text-gray-600 mt-1" id="info-desc">Turanga Circle</p>
+            </div>
+        </header>
+
+        <div class="scroll-prompt" id="scroll-prompt">
+            <span class="text-sm font-bold uppercase tracking-widest mb-1">Scroll to Enter</span>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
         </div>
     </div>
 
-    <!-- Progress Bar -->
-    <div id="progress-container"><div id="progress-bar"></div></div>
+    <div id="end-screen">
+        <div class="hud-panel shadow-2xl">
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-2">Ready to Upgrade?</h2>
+            <p class="text-gray-600 mb-6">Visit our physical store for the best deals on premium electronics.</p>
+            <p class="font-semibold text-gray-800 mb-6">📍 Turanga Circle, Near Petrol Pump, Idar, Gujarat</p>
+            <button class="btn" onclick="alert('Navigation starting...')">Get Directions</button>
+        </div>
+    </div>
 
-    <!-- Scroll Proxy -->
     <div id="scroll-proxy"></div>
+    <div id="canvas-container"><canvas id="webgl-canvas"></canvas></div>
 
-    <!-- WebGL Canvas -->
-    <canvas id="webgl-canvas"></canvas>
-
-    <!-- GSAP Libraries -->
+    <!-- GSAP for smooth scroll animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <!-- Main Application Logic -->
     <script type="module">
         import * as THREE from 'three';
 
-        // ==========================================================
-        // 1. SETUP & RENDERER
-        // ==========================================================
+        // ==========================================
+        // 1. SCENE SETUP & REALISTIC RENDERER
+        // ==========================================
         const canvas = document.getElementById('webgl-canvas');
         const scene = new THREE.Scene();
-        // Light blue sky background
-        scene.background = new THREE.Color(0x87CEEB); 
-        scene.fog = new THREE.Fog(0x87CEEB, 50, 400); // Realistic atmospheric perspective
+        // Light sky blue to simulate daylight outside, fading to white inside
+        scene.background = new THREE.Color(0xdbeafe); 
+        scene.fog = new THREE.Fog(0xdbeafe, 10, 150);
 
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
         
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        // Realistic Lighting setup
+        // Photorealistic Rendering Settings
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
+        renderer.toneMappingExposure = 1.1; // Bright retail environment
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-        const floaters = []; // For ambient animations
+        const clock = new THREE.Clock();
+        const animations = []; // Store elements that need constant rotation/movement
 
-        // ==========================================================
-        // 2. PROCEDURAL TEXTURE GENERATORS (Canvas API)
-        // ==========================================================
-        
-        // Generates high-res text layouts for the Business Card
-        function createCardTexture(isFront) {
+        // ==========================================
+        // 2. PROCEDURAL TEXTURES (Canvas API)
+        // ==========================================
+        function createWoodTexture() {
             const cvs = document.createElement('canvas');
-            cvs.width = 2048; cvs.height = 1024;
+            cvs.width = 512; cvs.height = 512;
             const ctx = cvs.getContext('2d');
-            
-            // Base paper texture (slight off-white)
-            ctx.fillStyle = '#f8f9fa';
-            ctx.fillRect(0, 0, cvs.width, cvs.height);
-            
-            // Subtle paper noise
-            for(let i=0; i<10000; i++) {
-                ctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.03})`;
-                ctx.fillRect(Math.random()*cvs.width, Math.random()*cvs.height, 2, 2);
+            ctx.fillStyle = '#8B5A2B'; // Base brown
+            ctx.fillRect(0,0,512,512);
+            // Procedural grain lines
+            ctx.fillStyle = 'rgba(60, 30, 10, 0.1)';
+            for(let i=0; i<200; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random()*512, 0);
+                ctx.lineTo(Math.random()*512, 512);
+                ctx.lineWidth = Math.random() * 5;
+                ctx.stroke();
             }
-
-            // Design accents
-            ctx.fillStyle = '#0f172a'; // Deep slate blue
-            ctx.fillRect(0, 0, 40, cvs.height); // Left border
-            ctx.fillRect(cvs.width - 40, 0, 40, cvs.height); // Right border
-
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#1e293b';
-
-            if (isFront) {
-                // Front Design
-                ctx.font = 'bold 120px "Playfair Display", serif';
-                ctx.fillText('NEW PRAKASH', cvs.width/2, 350);
-                
-                ctx.font = 'bold 90px Inter, sans-serif';
-                ctx.fillStyle = '#2563eb'; // Blue accent
-                ctx.fillText('RADIO SERVICE', cvs.width/2, 480);
-
-                ctx.fillStyle = '#475569';
-                ctx.font = '40px Inter, sans-serif';
-                ctx.fillText('ELECTRONICS • HOME APPLIANCES • MOBILES', cvs.width/2, 600);
-                
-                ctx.font = 'italic 45px "Playfair Display", serif';
-                ctx.fillText('Idar, Turanga Circle, Near Petrol Pump', cvs.width/2, 800);
-            } else {
-                // Back Design
-                ctx.font = 'bold 80px Inter, sans-serif';
-                ctx.fillText('AUTHORIZED RETAILER', cvs.width/2, 200);
-                
-                ctx.textAlign = 'left';
-                ctx.font = '50px Inter, sans-serif';
-                ctx.fillStyle = '#334155';
-                const items = [
-                    '✓ Smart TVs & LED Displays',
-                    '✓ Air Conditioners & Coolers',
-                    '✓ Home Theater & Speakers',
-                    '✓ Smartphones & Smartwatches',
-                    '✓ All Electronic Accessories'
-                ];
-                items.forEach((item, i) => {
-                    ctx.fillText(item, 500, 400 + (i * 100));
-                });
-            }
-
             const tex = new THREE.CanvasTexture(cvs);
-            tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
             return tex;
         }
 
-        // Generates Checkered Floor Texture
-        function createFloorTexture() {
+        function createMarbleFloorTexture() {
             const cvs = document.createElement('canvas');
             cvs.width = 1024; cvs.height = 1024;
             const ctx = cvs.getContext('2d');
             
+            // Base white
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(0,0,1024,1024);
+            
+            // Grid lines
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 4;
             const tileSize = 256;
-            for(let y=0; y<cvs.height; y+=tileSize) {
-                for(let x=0; x<cvs.width; x+=tileSize) {
-                    const isWhite = (x/tileSize + y/tileSize) % 2 === 0;
-                    ctx.fillStyle = isWhite ? '#f0f0f0' : '#d0d0d0'; // Off-white and light gray tiles
-                    ctx.fillRect(x, y, tileSize, tileSize);
-                }
+            for(let x=0; x<=1024; x+=tileSize) {
+                ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,1024); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0,x); ctx.lineTo(1024,x); ctx.stroke();
             }
             
+            // Subtle noise/marble veins
+            for(let i=0; i<1000; i++) {
+                ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.02})`;
+                ctx.beginPath();
+                ctx.arc(Math.random()*1024, Math.random()*1024, Math.random()*20, 0, Math.PI*2);
+                ctx.fill();
+            }
+
             const tex = new THREE.CanvasTexture(cvs);
-            tex.wrapS = THREE.RepeatWrapping;
-            tex.wrapT = THREE.RepeatWrapping;
-            tex.repeat.set(10, 40); // Repeat over the long floor
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(10, 30); // scale along long floor
             tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
             return tex;
         }
 
-        // Generates gradient textures for TV screens
-        function createScreenTexture(color1, color2) {
+        function createEarthTexture() {
+            const cvs = document.createElement('canvas');
+            cvs.width = 1024; cvs.height = 512;
+            const ctx = cvs.getContext('2d');
+            
+            // Ocean
+            ctx.fillStyle = '#0ea5e9'; 
+            ctx.fillRect(0, 0, cvs.width, cvs.height);
+            
+            // Abstract landmasses
+            ctx.fillStyle = '#22c55e';
+            for(let i=0; i<100; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random()*cvs.width, Math.random()*cvs.height, Math.random()*40, 0, Math.PI*2);
+                ctx.fill();
+            }
+            return new THREE.CanvasTexture(cvs);
+        }
+
+        function createScreenTexture(brand, color1, color2) {
             const cvs = document.createElement('canvas');
             cvs.width = 1024; cvs.height = 512;
             const ctx = cvs.getContext('2d');
@@ -289,423 +293,555 @@
             ctx.fillStyle = grad;
             ctx.fillRect(0,0, cvs.width, cvs.height);
             
-            // Draw some abstract UI/Picture elements
-            ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            ctx.beginPath(); ctx.arc(300, 256, 150, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(700, 150, 80, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 80px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(brand, cvs.width/2, cvs.height/2);
 
-            const tex = new THREE.CanvasTexture(cvs);
-            return tex;
-        }
-
-        // Very basic procedural earth texture
-        function createEarthTexture() {
-            const cvs = document.createElement('canvas');
-            cvs.width = 1024; cvs.height = 512;
-            const ctx = cvs.getContext('2d');
-            
-            // Ocean
-            ctx.fillStyle = '#1e3a8a'; 
-            ctx.fillRect(0, 0, cvs.width, cvs.height);
-            
-            // Fake continents via random arcs (abstract but colorful)
-            ctx.fillStyle = '#22c55e'; // Green
-            for(let i=0; i<60; i++) {
-                ctx.beginPath();
-                const x = Math.random() * cvs.width;
-                const y = Math.random() * cvs.height;
-                const r = 20 + Math.random() * 60;
-                ctx.arc(x, y, r, 0, Math.PI*2);
-                ctx.fill();
-            }
-            // Desert highlights
-            ctx.fillStyle = '#d97706'; 
-            for(let i=0; i<30; i++) {
-                ctx.beginPath();
-                ctx.arc(Math.random()*cvs.width, Math.random()*cvs.height, 30, 0, Math.PI*2);
-                ctx.fill();
-            }
+            // Abstract UI
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath(); ctx.arc(cvs.width/2, cvs.height/2, 200, 0, Math.PI*2); ctx.stroke();
 
             return new THREE.CanvasTexture(cvs);
         }
 
-        // ==========================================================
-        // 3. SCENE CONSTRUCTION (Physical Z-Axis Layout)
-        // ==========================================================
+        function createBusinessCardTexture(isFront) {
+            const cvs = document.createElement('canvas');
+            cvs.width = 1024; cvs.height = 512;
+            const ctx = cvs.getContext('2d');
+            
+            // Premium matte paper look
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0,0,1024,512);
+            
+            ctx.fillStyle = '#0f172a';
+            if (isFront) {
+                ctx.fillRect(0, 0, 20, 512); // Accent line
+                ctx.textAlign = 'center';
+                
+                ctx.font = 'bold 80px Inter';
+                ctx.fillText('NEW PRAKASH', 512, 220);
+                
+                ctx.fillStyle = '#2563eb';
+                ctx.font = 'bold 50px Inter';
+                ctx.fillText('RADIO SERVICE', 512, 290);
+                
+                ctx.fillStyle = '#64748b';
+                ctx.font = '30px Inter';
+                ctx.fillText('ELECTRONICS & APPLIANCES', 512, 360);
+            } else {
+                ctx.textAlign = 'left';
+                ctx.font = 'bold 45px Inter';
+                ctx.fillText('Authorized Retailer', 100, 150);
+                
+                ctx.font = '35px Inter';
+                ctx.fillStyle = '#334155';
+                const lines = ['📍 Turanga Circle', '📍 Near Petrol Pump', '📍 Idar, Gujarat'];
+                lines.forEach((l, i) => ctx.fillText(l, 100, 250 + (i*60)));
+            }
+            
+            const tex = new THREE.CanvasTexture(cvs);
+            tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            return tex;
+        }
+
+        // ==========================================
+        // 3. REALISTIC MATERIALS LIBRARY
+        // ==========================================
+        const texWood = createWoodTexture();
+        const texMarble = createMarbleFloorTexture();
+
+        const matGlass = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff, metalness: 0.1, roughness: 0.05,
+            transmission: 0.9, ior: 1.5, thickness: 0.5, clearcoat: 1.0
+        });
         
-        // --- COMMON MATERIALS ---
-        const matWood = new THREE.MeshStandardMaterial({ color: 0x8B5A2B, roughness: 0.9, metalness: 0.1 });
-        const matPlasticBlack = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3, metalness: 0.5 });
-        const matPlasticWhite = new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.2, metalness: 0.1 });
-        const matGlass = new THREE.MeshPhysicalMaterial({ 
-            color: 0xffffff, transmission: 0.9, opacity: 1, metalness: 0, roughness: 0.05, ior: 1.5, thickness: 0.5
+        const matScreenGlass = new THREE.MeshPhysicalMaterial({
+            color: 0x000000, metalness: 0.8, roughness: 0.1, clearcoat: 1.0
         });
 
-        // ----------------------------------------------------------
-        // ZONE 1: THE EARTH (z = 100)
-        // ----------------------------------------------------------
+        const matMetalAlum = new THREE.MeshStandardMaterial({
+            color: 0xd4d4d8, metalness: 0.8, roughness: 0.2
+        });
+        
+        const matMetalDark = new THREE.MeshStandardMaterial({
+            color: 0x27272a, metalness: 0.7, roughness: 0.3
+        });
+
+        const matPlasticWhite = new THREE.MeshStandardMaterial({
+            color: 0xf8fafc, metalness: 0.1, roughness: 0.4
+        });
+        
+        const matPlasticBlack = new THREE.MeshStandardMaterial({
+            color: 0x18181b, metalness: 0.2, roughness: 0.5
+        });
+
+        const matWood = new THREE.MeshStandardMaterial({
+            map: texWood, roughness: 0.7, metalness: 0.05
+        });
+
+
+        // ==========================================
+        // 4. PROCEDURAL MODEL GENERATORS
+        // ==========================================
+        
+        // Generates a rounded box using ExtrudeGeometry (Crucial for realistic phones/watches)
+        function createRoundedBox(width, height, depth, radius, material) {
+            const shape = new THREE.Shape();
+            const x = -width/2, y = -height/2;
+            shape.moveTo(x, y + radius);
+            shape.lineTo(x, y + height - radius);
+            shape.quadraticCurveTo(x, y + height, x + radius, y + height);
+            shape.lineTo(x + width - radius, y + height);
+            shape.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+            shape.lineTo(x + width, y + radius);
+            shape.quadraticCurveTo(x + width, y, x + width - radius, y);
+            shape.lineTo(x + radius, y);
+            shape.quadraticCurveTo(x, y, x, y + radius);
+            
+            const extrudeSettings = { depth: depth, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.02, bevelThickness: 0.02 };
+            const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            geo.center(); // Center the geometry origin
+            const mesh = new THREE.Mesh(geo, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        // --- Realistic Smartphone ---
+        function createSmartphone(screenTex, colorMat = matMetalAlum) {
+            const group = new THREE.Group();
+            
+            // Body (Metal/Colored rim and back)
+            const body = createRoundedBox(0.7, 1.5, 0.05, 0.1, colorMat);
+            
+            // Screen (Black glass + bright image)
+            const screenGeo = new THREE.PlaneGeometry(0.65, 1.45);
+            const screenMat = new THREE.MeshBasicMaterial({ map: screenTex });
+            const screen = new THREE.Mesh(screenGeo, screenMat);
+            screen.position.z = 0.03; // slightly in front
+            
+            // Glass overlay
+            const glassOverlay = new THREE.Mesh(screenGeo, matGlass);
+            glassOverlay.position.z = 0.035;
+
+            // Camera Bump
+            const bump = createRoundedBox(0.3, 0.3, 0.02, 0.05, colorMat);
+            bump.position.set(-0.15, 0.5, -0.03);
+            
+            // Lenses
+            const lensGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.03, 16);
+            lensGeo.rotateX(Math.PI/2);
+            for(let i=0; i<3; i++) {
+                const lens = new THREE.Mesh(lensGeo, matScreenGlass);
+                lens.position.set(-0.15 + (i===2?0.08:-0.05), 0.5 + (i===0?0.08:-0.08), -0.05);
+                group.add(lens);
+            }
+
+            group.add(body, screen, glassOverlay, bump);
+            return group;
+        }
+
+        // --- Realistic TV ---
+        function createTV(width, height, screenTex) {
+            const group = new THREE.Group();
+            
+            // Back chassis
+            const chassis = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.2), matPlasticBlack);
+            chassis.castShadow = true;
+            
+            // Screen
+            const screen = new THREE.Mesh(new THREE.PlaneGeometry(width-0.1, height-0.1), new THREE.MeshBasicMaterial({map: screenTex}));
+            screen.position.z = 0.101;
+            
+            // Screen Glass
+            const glass = new THREE.Mesh(new THREE.PlaneGeometry(width-0.1, height-0.1), matScreenGlass);
+            glass.position.z = 0.105;
+
+            group.add(chassis, screen, glass);
+            return group;
+        }
+
+        // --- Realistic Tower Speaker ---
+        function createSpeaker() {
+            const group = new THREE.Group();
+            
+            // Wooden Box
+            const box = new THREE.Mesh(new THREE.BoxGeometry(2, 6, 2.5), matWood);
+            box.castShadow = true; box.receiveShadow = true;
+            group.add(box);
+            
+            // Front grill panel (black fabric/plastic)
+            const front = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 5.8), matPlasticBlack);
+            front.position.z = 1.26;
+            group.add(front);
+
+            // Cones (Drivers)
+            const coneGeo = new THREE.CylinderGeometry(0.6, 0.2, 0.3, 32);
+            coneGeo.rotateX(Math.PI/2);
+            const coneMat = matMetalDark;
+            
+            for(let y of [1.5, 0, -1.5]) {
+                const cone = new THREE.Mesh(coneGeo, coneMat);
+                cone.position.set(0, y, 1.2);
+                group.add(cone);
+                
+                // Center dome
+                const dome = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), matPlasticBlack);
+                dome.scale.z = 0.5;
+                dome.position.set(0, y, 1.3);
+                group.add(dome);
+            }
+            return group;
+        }
+
+        // --- Realistic AC Unit ---
+        function createAC() {
+            const group = new THREE.Group();
+            
+            const body = createRoundedBox(8, 2.5, 2, 0.2, matPlasticWhite);
+            
+            // Bottom vent slit
+            const vent = new THREE.Mesh(new THREE.BoxGeometry(6, 0.2, 1), matMetalDark);
+            vent.position.set(0, -1, 0.5);
+            vent.rotation.x = Math.PI / 8;
+            
+            // Digital Display
+            const dispGeo = new THREE.PlaneGeometry(0.8, 0.4);
+            const dispMat = new THREE.MeshBasicMaterial({color: 0x00ffcc}); // cyan LED
+            const disp = new THREE.Mesh(dispGeo, dispMat);
+            disp.position.set(2.5, -0.5, 1.01);
+
+            group.add(body, vent, disp);
+            return group;
+        }
+
+
+        // ==========================================
+        // 5. SCENE ASSEMBLY (Z-Axis Layout)
+        // ==========================================
+
+        // --- ZONE 1: EARTH (z = 80) ---
         const earthGroup = new THREE.Group();
-        earthGroup.position.set(0, 0, 100);
+        earthGroup.position.set(0, 0, 80);
         scene.add(earthGroup);
 
-        const earthGeo = new THREE.SphereGeometry(20, 64, 64);
+        const earthGeo = new THREE.SphereGeometry(15, 64, 64);
         const earthMat = new THREE.MeshStandardMaterial({ 
             map: createEarthTexture(), roughness: 0.6, metalness: 0.1 
         });
         const earth = new THREE.Mesh(earthGeo, earthMat);
         earthGroup.add(earth);
-        floaters.push({obj: earth, type: 'rotate', x: 0, y: 0.002});
+        animations.push({obj: earth, axis: 'y', speed: 0.002});
 
         // Pin for Gujarat
-        const pinGroup = new THREE.Group();
-        const pinGeo = new THREE.ConeGeometry(0.5, 2, 16);
-        const pinMat = new THREE.MeshStandardMaterial({ color: 0xff0000, roughness: 0.2 });
-        const pin = new THREE.Mesh(pinGeo, pinMat);
+        const pin = new THREE.Mesh(new THREE.ConeGeometry(0.3, 1.5, 16), new THREE.MeshStandardMaterial({color: 0xff0000}));
         pin.rotation.x = Math.PI / 2;
-        pin.position.z = 21; // sit on surface
-        pinGroup.add(pin);
+        pin.position.z = 15.5;
         
-        // Approximate Lat/Lon mapped to rotation
-        pinGroup.rotation.y = (73 * Math.PI) / 180;
-        pinGroup.rotation.x = -(23.8 * Math.PI) / 180;
-        earthGroup.add(pinGroup);
+        const pinRotator = new THREE.Group();
+        pinRotator.rotation.y = (73 * Math.PI) / 180;
+        pinRotator.rotation.x = -(23.8 * Math.PI) / 180;
+        pinRotator.add(pin);
+        earthGroup.add(pinRotator);
 
-        // Sun light for earth
-        const earthSun = new THREE.DirectionalLight(0xffffff, 2);
-        earthSun.position.set(50, 20, 150);
-        scene.add(earthSun);
+        // Sunlight for Earth
+        const sun = new THREE.DirectionalLight(0xffffff, 2);
+        sun.position.set(50, 20, 100);
+        scene.add(sun);
 
 
-        // ----------------------------------------------------------
-        // ZONE 2: THE BUSINESS CARD (z = 40)
-        // ----------------------------------------------------------
+        // --- ZONE 2: BUSINESS CARD (z = 30) ---
         const cardGroup = new THREE.Group();
-        cardGroup.position.set(0, 0, 40);
+        cardGroup.position.set(0, 0, 30);
         scene.add(cardGroup);
 
-        const cardW = 16, cardH = 9;
-        const cardGeo = new THREE.BoxGeometry(cardW, cardH, 0.1);
-        
-        const matCardFront = new THREE.MeshStandardMaterial({ map: createCardTexture(true), roughness: 0.4 });
-        const matCardBack = new THREE.MeshStandardMaterial({ map: createCardTexture(false), roughness: 0.4 });
+        const cardGeo = new THREE.BoxGeometry(8, 4, 0.05);
+        const matCardFront = new THREE.MeshStandardMaterial({ map: createBusinessCardTexture(true), roughness: 0.5 });
+        const matCardBack = new THREE.MeshStandardMaterial({ map: createBusinessCardTexture(false), roughness: 0.5 });
         const matCardEdge = new THREE.MeshStandardMaterial({ color: 0xffffff });
         
         const card = new THREE.Mesh(cardGeo, [matCardEdge, matCardEdge, matCardEdge, matCardEdge, matCardFront, matCardBack]);
         card.castShadow = true;
         cardGroup.add(card);
-        floaters.push({obj: cardGroup, type: 'float', amp: 0.5, speed: 2});
+        animations.push({obj: cardGroup, type: 'float', amp: 0.2, speed: 2});
 
 
-        // ----------------------------------------------------------
-        // ZONE 3: THE SHOP INTERIOR (z = 0 to -200)
-        // ----------------------------------------------------------
+        // --- ZONE 3: REALISTIC SHOP INTERIOR (z = 0 to -150) ---
         const shopGroup = new THREE.Group();
         scene.add(shopGroup);
 
-        // 1. Architecture (Floor, Walls, Ceiling)
-        const floorGeo = new THREE.PlaneGeometry(60, 250);
-        const floorMat = new THREE.MeshStandardMaterial({ map: createFloorTexture(), roughness: 0.1, metalness: 0.1 });
-        const floor = new THREE.Mesh(floorGeo, floorMat);
+        // 1. Architecture
+        const floorGeo = new THREE.PlaneGeometry(50, 200);
+        const floor = new THREE.Mesh(floorGeo, new THREE.MeshStandardMaterial({ map: texMarble, roughness: 0.2, metalness: 0.1 }));
         floor.rotation.x = -Math.PI / 2;
-        floor.position.set(0, -10, -100);
+        floor.position.set(0, -6, -80);
         floor.receiveShadow = true;
         shopGroup.add(floor);
 
-        const wallMat = new THREE.MeshStandardMaterial({ color: 0xfffae6, roughness: 0.9 }); // Warm off-white
+        const wallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9 });
         
-        const wallLeft = new THREE.Mesh(new THREE.PlaneGeometry(250, 40), wallMat);
-        wallLeft.rotation.y = Math.PI / 2;
-        wallLeft.position.set(-25, 10, -100);
-        wallLeft.receiveShadow = true;
-        shopGroup.add(wallLeft);
+        const wallL = new THREE.Mesh(new THREE.PlaneGeometry(200, 30), wallMat);
+        wallL.rotation.y = Math.PI / 2;
+        wallL.position.set(-20, 9, -80);
+        wallL.receiveShadow = true;
+        shopGroup.add(wallL);
 
-        const wallRight = new THREE.Mesh(new THREE.PlaneGeometry(250, 40), wallMat);
-        wallRight.rotation.y = -Math.PI / 2;
-        wallRight.position.set(25, 10, -100);
-        wallRight.receiveShadow = true;
-        shopGroup.add(wallRight);
+        const wallR = new THREE.Mesh(new THREE.PlaneGeometry(200, 30), wallMat);
+        wallR.rotation.y = -Math.PI / 2;
+        wallR.position.set(20, 9, -80);
+        wallR.receiveShadow = true;
+        shopGroup.add(wallR);
 
-        const wallBack = new THREE.Mesh(new THREE.PlaneGeometry(50, 40), wallMat);
-        wallBack.position.set(0, 10, -225);
-        wallBack.receiveShadow = true;
-        shopGroup.add(wallBack);
-
-        const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(60, 250), new THREE.MeshStandardMaterial({color: 0xffffff, roughness: 1}));
+        const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(50, 200), new THREE.MeshStandardMaterial({color: 0xffffff, roughness: 1}));
         ceiling.rotation.x = Math.PI / 2;
-        ceiling.position.set(0, 30, -100);
+        ceiling.position.set(0, 24, -80);
         shopGroup.add(ceiling);
 
-        // 2. Shop Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // soft fill
+        // 2. Realistic Shop Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Base fill
         shopGroup.add(ambientLight);
 
-        // Main sunlight streaming in from the entrance
-        const shopSun = new THREE.DirectionalLight(0xfff5b6, 1.5); // warm sunlight
-        shopSun.position.set(0, 20, 20);
-        shopSun.target.position.set(0, 0, -100);
-        shopSun.castShadow = true;
-        shopSun.shadow.camera.near = 0.5;
-        shopSun.shadow.camera.far = 300;
-        shopSun.shadow.camera.left = -30;
-        shopSun.shadow.camera.right = 30;
-        shopSun.shadow.camera.top = 100;
-        shopSun.shadow.camera.bottom = -20;
-        shopSun.shadow.mapSize.width = 2048;
-        shopSun.shadow.mapSize.height = 2048;
-        shopGroup.add(shopSun);
-        shopGroup.add(shopSun.target);
-
-        // Interior Overhead Lights (LED Panels)
-        for(let z = -20; z >= -200; z -= 40) {
-            const pointLight = new THREE.PointLight(0xffffff, 0.8, 100);
-            pointLight.position.set(0, 28, z);
-            shopGroup.add(pointLight);
+        // Main store lights (Linear LED strips simulated by PointLights along ceiling)
+        for(let z = -10; z >= -160; z -= 20) {
+            const light = new THREE.PointLight(0xffffff, 1, 50);
+            light.position.set(0, 22, z);
+            light.castShadow = true;
+            light.shadow.bias = -0.001;
+            shopGroup.add(light);
             
-            // Visual LED fixture
-            const fixture = new THREE.Mesh(new THREE.BoxGeometry(10, 0.5, 2), new THREE.MeshBasicMaterial({color: 0xffffff}));
-            fixture.position.set(0, 29.5, z);
+            // Visible fixture
+            const fixture = new THREE.Mesh(new THREE.BoxGeometry(8, 0.2, 1), matPlasticWhite);
+            fixture.position.set(0, 23.5, z);
             shopGroup.add(fixture);
         }
 
-        // --- HELPER FUNCTION TO BUILD SHELVES ---
-        function createShelf(x, z, width, shelvesCount) {
-            const shelfGroup = new THREE.Group();
-            shelfGroup.position.set(x, -10, z); // start at floor
-            
-            // Side panels
-            const sideGeo = new THREE.BoxGeometry(4, 25, 0.5);
-            const leftPanel = new THREE.Mesh(sideGeo, matWood);
-            leftPanel.position.set(-width/2, 12.5, 0); leftPanel.castShadow = true; leftPanel.receiveShadow = true;
-            const rightPanel = leftPanel.clone();
-            rightPanel.position.set(width/2, 12.5, 0);
-            shelfGroup.add(leftPanel, rightPanel);
-
-            // Horizontal planks
-            for(let i=0; i<shelvesCount; i++) {
-                const plank = new THREE.Mesh(new THREE.BoxGeometry(width, 0.5, 4), matWood);
-                plank.position.set(0, 2 + (i * (25/shelvesCount)), 0);
-                plank.castShadow = true; plank.receiveShadow = true;
-                shelfGroup.add(plank);
-            }
-            return shelfGroup;
-        }
-
-        // 3. Populate Left Wall (TVs)
-        const screens = [
-            createScreenTexture('#ff0055', '#ffaa00'),
-            createScreenTexture('#0055ff', '#00ffaa'),
-            createScreenTexture('#aa00ff', '#ff00aa')
+        // 3. Left Wall: TV Displays
+        const tvScreens = [
+            createScreenTexture('SAMSUNG Neo', '#000000', '#0044ff'),
+            createScreenTexture('SONY Bravia', '#220033', '#ff00aa'),
+            createScreenTexture('LG OLED', '#003311', '#00ff44')
         ];
 
-        for(let z = -30; z >= -180; z -= 30) {
-            const shelf = createShelf(-24, z, 20, 3);
-            shelf.rotation.y = Math.PI / 2;
-            shopGroup.add(shelf);
+        for(let z = -20; z >= -120; z -= 25) {
+            // Wood Panel backing
+            const panel = new THREE.Mesh(new THREE.BoxGeometry(1, 15, 20), matWood);
+            panel.position.set(-19.5, 4, z);
+            panel.receiveShadow = true; panel.castShadow = true;
+            shopGroup.add(panel);
 
-            // Add TVs to shelves
-            for(let i=0; i<3; i++) {
-                const tvH = 2 + (i * 8.3); // Y pos on shelf
-                const tvGroup = new THREE.Group();
-                tvGroup.position.set(-22, -10 + tvH + 2, z); // x offset slightly off wall
-                tvGroup.rotation.y = Math.PI / 2;
-                
-                const frame = new THREE.Mesh(new THREE.BoxGeometry(14, 8, 0.5), matPlasticBlack);
-                frame.castShadow = true;
-                
-                const screenMat = new THREE.MeshBasicMaterial({ map: screens[(z+i)%3] }); // Basic mat emits light
-                const screen = new THREE.Mesh(new THREE.PlaneGeometry(13.5, 7.5), screenMat);
-                screen.position.z = 0.26;
-                
-                tvGroup.add(frame, screen);
-                shopGroup.add(tvGroup);
-            }
+            // Large TV
+            const tv = createTV(14, 8, tvScreens[Math.abs(z/25)%3]);
+            tv.rotation.y = Math.PI / 2;
+            tv.position.set(-18.5, 5, z);
+            shopGroup.add(tv);
+            
+            // Accent SpotLight for TV
+            const spot = new THREE.SpotLight(0xffffff, 2, 30, Math.PI/6, 0.5, 1);
+            spot.position.set(-10, 15, z);
+            spot.target = tv;
+            shopGroup.add(spot);
+            shopGroup.add(spot.target);
         }
 
-        // 4. Populate Right Wall (Speakers & ACs)
-        for(let z = -30; z >= -180; z -= 30) {
-            // AC Unit high up on the wall
-            const acGroup = new THREE.Group();
-            acGroup.position.set(24, 20, z);
-            acGroup.rotation.y = -Math.PI / 2;
-            
-            const acBody = new THREE.Mesh(new THREE.BoxGeometry(12, 4, 3), matPlasticWhite);
-            acBody.castShadow = true; acBody.receiveShadow = true;
-            const acVent = new THREE.Mesh(new THREE.BoxGeometry(10, 0.5, 0.5), matPlasticBlack);
-            acVent.position.set(0, -1, 1.3);
-            acGroup.add(acBody, acVent);
-            shopGroup.add(acGroup);
+        // 4. Right Wall: Air Conditioners & Speakers
+        for(let z = -20; z >= -120; z -= 30) {
+            // High mounted AC
+            const ac = createAC();
+            ac.rotation.y = -Math.PI / 2;
+            ac.position.set(18.5, 15, z);
+            shopGroup.add(ac);
 
-            // Speakers on the floor
-            for(let i = -1; i <= 1; i+=2) {
-                const spk = new THREE.Mesh(new THREE.BoxGeometry(3, 12, 4), matWood);
-                spk.position.set(22, -4, z + (i*6));
-                spk.rotation.y = -Math.PI / 2;
-                spk.castShadow = true; spk.receiveShadow = true;
-                
-                // Cones
-                const coneGeo = new THREE.CylinderGeometry(1, 1, 0.2, 16);
-                for(let y of [-3, 0, 3]) {
-                    const cone = new THREE.Mesh(coneGeo, matPlasticBlack);
-                    cone.rotation.x = Math.PI / 2;
-                    cone.position.set(0, y, 2.1);
-                    spk.add(cone);
-                }
-                shopGroup.add(spk);
-            }
+            // Floor standing Speakers
+            const spkL = createSpeaker();
+            spkL.rotation.y = -Math.PI / 2;
+            spkL.position.set(18, -3, z - 3);
+            
+            const spkR = createSpeaker();
+            spkR.rotation.y = -Math.PI / 2;
+            spkR.position.set(18, -3, z + 3);
+            
+            shopGroup.add(spkL, spkR);
         }
 
-        // 5. Center Glass Counters (Mobiles / Smartwatches)
-        for(let z = -50; z >= -150; z -= 35) {
-            const counterGroup = new THREE.Group();
-            counterGroup.position.set(0, -10, z);
+        // 5. Center Aisle: Glass Display Tables (Phones)
+        const phoneTex1 = createScreenTexture('14:30', '#111', '#333');
+        const phoneTex2 = createScreenTexture('Hello', '#0f766e', '#042f2e');
+        const phoneMats = [matMetalAlum, matMetalDark];
+
+        for(let z = -30; z >= -130; z -= 40) {
+            const tableGroup = new THREE.Group();
+            tableGroup.position.set(0, -6, z);
             
-            // Wooden Base
-            const base = new THREE.Mesh(new THREE.BoxGeometry(12, 6, 8), matWood);
-            base.position.y = 3;
-            base.castShadow = true; base.receiveShadow = true;
-            counterGroup.add(base);
+            // Wooden plinth
+            const plinth = new THREE.Mesh(new THREE.BoxGeometry(8, 4, 6), matWood);
+            plinth.position.y = 2;
+            plinth.castShadow = true; plinth.receiveShadow = true;
+            
+            // Glass Showcase Top
+            const showcase = new THREE.Mesh(new THREE.BoxGeometry(8.5, 2, 6.5), matGlass);
+            showcase.position.y = 5;
+            showcase.castShadow = true;
 
-            // Glass Top
-            const glassTop = new THREE.Mesh(new THREE.BoxGeometry(12, 4, 8), matGlass);
-            glassTop.position.y = 8;
-            glassTop.castShadow = true;
-            counterGroup.add(glassTop);
+            tableGroup.add(plinth, showcase);
 
-            // Phones inside glass
-            for(let x=-4; x<=4; x+=2) {
-                for(let dz=-2; dz<=2; dz+=2) {
-                    const phone = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.1, 1.6), new THREE.MeshStandardMaterial({color: 0x444444, metalness: 0.8, roughness: 0.2}));
-                    phone.position.set(x, 6.2, dz);
-                    counterGroup.add(phone);
+            // Populate Phones inside glass
+            for(let x=-2; x<=2; x+=2) {
+                for(let dz=-1.5; dz<=1.5; dz+=1.5) {
+                    const phone = createSmartphone(
+                        (x+dz)%2===0 ? phoneTex1 : phoneTex2, 
+                        phoneMats[Math.abs(x)%2]
+                    );
+                    phone.position.set(x, 4.1, dz);
+                    phone.rotation.x = -Math.PI / 2; // laying flat
+                    // Prop up slightly
+                    phone.rotation.x += 0.1;
+                    phone.position.y += 0.1;
+                    tableGroup.add(phone);
                 }
             }
-            shopGroup.add(counterGroup);
+            shopGroup.add(tableGroup);
         }
 
+        // 6. Back Wall: Checkout Counter
+        const counterGroup = new THREE.Group();
+        counterGroup.position.set(0, -6, -160);
+        
+        const counterDesk = new THREE.Mesh(new THREE.BoxGeometry(16, 5, 4), matWood);
+        counterDesk.position.y = 2.5;
+        counterDesk.castShadow = true; counterDesk.receiveShadow = true;
+        counterGroup.add(counterDesk);
 
-        // ==========================================================
-        // 4. GSAP SCROLLTIMELINE & CAMERA CHOREOGRAPHY
-        // ==========================================================
+        // Logo on back wall
+        const logoBoard = new THREE.Mesh(new THREE.PlaneGeometry(16, 6), new THREE.MeshBasicMaterial({map: createBusinessCardTexture(true)}));
+        logoBoard.position.set(0, 10, -14);
+        counterGroup.add(logoBoard);
+
+        shopGroup.add(counterGroup);
+
+
+        // ==========================================
+        // 6. GSAP CHOREOGRAPHY (Scroll Animation)
+        // ==========================================
         gsap.registerPlugin(ScrollTrigger);
 
-        // Initial Setup
-        camera.position.set(0, 0, 160); // Start far back looking at Earth
+        // Initial camera position (Deep space looking at earth)
+        camera.position.set(0, 0, 140);
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: "#scroll-proxy",
                 start: "top top",
                 end: "bottom bottom",
-                scrub: 1,
-                onUpdate: updateUI
+                scrub: 1.5, // Smooth scrubbing
+                onUpdate: updateHUD
             }
         });
 
-        // STAGE 1: Zoom to Earth / India (0% - 15%)
-        tl.to(camera.position, { z: 108, ease: "power1.inOut", duration: 10 }, 0);
-        tl.to(earthGroup.rotation, { x: 0.2, y: -0.5, ease: "power1.inOut", duration: 10 }, 0); // Rotate towards pin
+        // STAGE 1: Zoom into Earth (Gujarat) [0% - 15%]
+        tl.to(camera.position, { z: 85, ease: "power2.inOut", duration: 15 }, 0);
+        tl.to(earthGroup.rotation, { x: 0.1, y: -0.5, ease: "power1.inOut", duration: 15 }, 0); 
 
-        // STAGE 2: Transition to Business Card (15% - 20%)
-        // Rapid jump of camera to view the card, hiding earth behind
-        tl.to(camera.position, { z: 65, ease: "power2.inOut", duration: 5 }, 10);
+        // STAGE 2: Fly to Business Card [15% - 25%]
+        tl.to(camera.position, { z: 45, ease: "power2.inOut", duration: 10 }, 15);
         
-        // STAGE 3: Examine Business Card (20% - 35%)
-        tl.to(cardGroup.rotation, { y: Math.PI, ease: "power1.inOut", duration: 8 }, 15); // Flip to back
-        tl.to(cardGroup.rotation, { y: Math.PI * 2, ease: "power1.inOut", duration: 7 }, 23); // Flip to front again
-
-        // STAGE 4: Enter the Shop (35% - 45%)
-        // Fly through/past the card and into the doorway
-        tl.to(camera.position, { z: -10, y: -2, ease: "power2.in", duration: 10 }, 30);
-        tl.to(cardGroup.position, { y: 20, ease: "power1.in", duration: 5 }, 35); // move card up out of way
-
-        // STAGE 5: Walk down the aisle (45% - 100%)
-        tl.to(camera.position, { z: -190, ease: "none", duration: 60 }, 40);
+        // STAGE 3: Inspect Card [25% - 40%]
+        tl.to(cardGroup.rotation, { y: Math.PI, ease: "none", duration: 7 }, 25); // Flip to back
+        tl.to(cardGroup.rotation, { y: Math.PI * 2, ease: "none", duration: 8 }, 32); // Flip to front
         
-        // Add subtle looking left/right while walking
-        tl.to(camera.rotation, { y: 0.3, ease: "sine.inOut", duration: 10 }, 45); // Look left at TVs
-        tl.to(camera.rotation, { y: -0.3, ease: "sine.inOut", duration: 15 }, 60); // Look right at Speakers
-        tl.to(camera.rotation, { y: 0.1, ease: "sine.inOut", duration: 10 }, 80); // Look towards center counter
-        tl.to(camera.rotation, { y: 0, ease: "sine.inOut", duration: 5 }, 95); // Face forward at end
+        // STAGE 4: Enter Shop [40% - 50%]
+        tl.to(camera.position, { z: -10, y: 0, ease: "power2.inOut", duration: 10 }, 40);
+        tl.to(cardGroup.position, { y: 15, ease: "power2.in", duration: 5 }, 42); // Card flies up out of way
+
+        // STAGE 5: Walk down aisle [50% - 100%]
+        tl.to(camera.position, { z: -145, ease: "none", duration: 50 }, 50);
+        
+        // Dynamic looking around while walking
+        tl.to(camera.rotation, { y: 0.3, ease: "sine.inOut", duration: 8 }, 55); // Look left at TVs
+        tl.to(camera.rotation, { y: -0.3, ease: "sine.inOut", duration: 12 }, 65); // Look right at ACs/Speakers
+        tl.to(camera.rotation, { y: 0.2, ease: "sine.inOut", duration: 8 }, 80); // Look at center table
+        tl.to(camera.rotation, { y: 0, ease: "sine.inOut", duration: 5 }, 90); // Look forward to counter
 
 
-        // ==========================================================
-        // 5. UI UPDATES
-        // ==========================================================
+        // ==========================================
+        // 7. UI LOGIC & RENDER LOOP
+        // ==========================================
         const progressBar = document.getElementById('progress-bar');
         const scrollPrompt = document.getElementById('scroll-prompt');
-        const contextPanel = document.getElementById('context-panel');
-        const contextTitle = document.getElementById('context-title');
-        const contextDesc = document.getElementById('context-desc');
+        const infoPanel = document.getElementById('info-panel');
+        const infoCat = document.getElementById('info-category');
+        const infoTitle = document.getElementById('info-title');
+        const infoDesc = document.getElementById('info-desc');
+        const endScreen = document.getElementById('end-screen');
 
-        function updateUI(self) {
+        function updateHUD(self) {
             const p = self.progress;
             progressBar.style.width = `${p * 100}%`;
 
-            // Fade out scroll prompt
-            if (p > 0.02 && scrollPrompt.style.opacity !== '0') {
-                gsap.to(scrollPrompt, {opacity: 0, duration: 0.5});
-            }
+            // Fade out scroll prompt early
+            if (p > 0.02) scrollPrompt.style.opacity = '0';
+            else scrollPrompt.style.opacity = '1';
 
-            // Update Context Panel based on scroll journey
+            // HUD logic
             if (p < 0.15) {
-                contextPanel.style.opacity = '0';
-            } 
-            else if (p >= 0.15 && p < 0.35) {
-                contextPanel.style.opacity = '1';
-                contextTitle.innerText = "Digital Business Card";
-                contextDesc.innerText = "Authorized Retailer";
+                gsap.to(infoPanel, {opacity: 0, y: -20, duration: 0.3});
+                endScreen.style.pointerEvents = 'none';
+                gsap.to(endScreen, {opacity: 0, duration: 0.3});
             }
-            else if (p >= 0.35 && p < 0.5) {
-                contextPanel.style.opacity = '1';
-                contextTitle.innerText = "Store Entrance";
-                contextDesc.innerText = "Welcome Inside";
+            else if (p >= 0.15 && p < 0.45) {
+                gsap.to(infoPanel, {opacity: 1, y: 0, duration: 0.3});
+                infoCat.innerText = "Official Store";
+                infoTitle.innerText = "Digital Hub";
+                infoDesc.innerText = "Authorized Retailer";
             }
-            else if (p >= 0.5 && p < 0.65) {
-                contextTitle.innerText = "Visual Displays";
-                contextDesc.innerText = "Smart TVs & Monitors";
+            else if (p >= 0.45 && p < 0.65) {
+                infoCat.innerText = "Section 01";
+                infoTitle.innerText = "Smart Displays";
+                infoDesc.innerText = "Premium OLED & LED TVs";
             }
             else if (p >= 0.65 && p < 0.85) {
-                contextTitle.innerText = "Home Appliances & Audio";
-                contextDesc.innerText = "ACs, Coolers & Speakers";
+                infoCat.innerText = "Section 02";
+                infoTitle.innerText = "Audio & Climate";
+                infoDesc.innerText = "Tower Speakers & ACs";
             }
-            else if (p >= 0.85) {
-                contextTitle.innerText = "Personal Tech";
-                contextDesc.innerText = "Mobiles & Smartwatches";
+            else if (p >= 0.85 && p < 0.95) {
+                infoCat.innerText = "Section 03";
+                infoTitle.innerText = "Mobile Tech";
+                infoDesc.innerText = "Latest Smartphones";
+                
+                endScreen.style.pointerEvents = 'none';
+                gsap.to(endScreen, {opacity: 0, duration: 0.3});
+            }
+            else if (p >= 0.95) {
+                gsap.to(infoPanel, {opacity: 0, y: -20, duration: 0.3});
+                endScreen.style.pointerEvents = 'auto';
+                gsap.to(endScreen, {opacity: 1, duration: 0.5});
             }
         }
 
-        // ==========================================================
-        // 6. ANIMATION RENDER LOOP
-        // ==========================================================
-        const clock = new THREE.Clock();
-
         function animate() {
             requestAnimationFrame(animate);
-            const delta = clock.getDelta();
             const time = clock.getElapsedTime();
 
-            // Handle ambient floaters/rotations
-            floaters.forEach(f => {
-                if(f.type === 'rotate') {
-                    f.obj.rotation.x += f.x;
-                    f.obj.rotation.y += f.y;
-                } else if(f.type === 'float') {
-                    f.obj.position.y = Math.sin(time * f.speed) * f.amp;
+            // Handle continuous animations
+            animations.forEach(anim => {
+                if(anim.type === 'float') {
+                    anim.obj.position.y = Math.sin(time * anim.speed) * anim.amp;
+                } else if(anim.axis) {
+                    anim.obj.rotation[anim.axis] += anim.speed;
                 }
             });
 
-            // Very subtle camera bobbing for realistic walking feel when inside shop
-            if (camera.position.z < 0) {
-                camera.position.y = -2 + Math.sin(time * 3) * 0.2;
+            // Head bobbing effect when inside the store
+            if (camera.position.z < 0 && camera.position.z > -140) {
+                camera.position.y = Math.sin(time * 4) * 0.2; // subtle walking bob
             }
 
             renderer.render(scene, camera);
         }
         animate();
 
-        // ==========================================================
-        // 7. RESIZE HANDLER
-        // ==========================================================
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
